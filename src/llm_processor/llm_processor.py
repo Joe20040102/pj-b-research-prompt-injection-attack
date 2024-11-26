@@ -1,7 +1,8 @@
 import os
-from dotenv import load_dotenv
+
 import google.generativeai as genai
 import openai
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -12,8 +13,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Google Generative AIの設定
 genai.configure(api_key=GOOGLE_API_KEY)
 
+
 class LLM:
-    def __init__(self,provider: str, model_name: str):
+    def __init__(self, provider: str, model_name: str):
         """
         Args:
             model_name (str): 使用するモデルの名前
@@ -31,7 +33,9 @@ class LLM:
                 raise ValueError("OpenAI APIキーが設定されていません。")
             openai.api_key = OPENAI_API_KEY
         else:
-            raise ValueError("無効なプロバイダ名です。'gemini' または 'openai' を指定してください。")
+            raise ValueError(
+                "無効なプロバイダ名です。'gemini' または 'openai' を指定してください。"
+            )
 
     def generate(self, prompt: str) -> str:
         """プロンプトに基づいてタスクを処理する
@@ -47,6 +51,6 @@ class LLM:
             response = openai.Completion.create(
                 model=self.model_name,
                 prompt=prompt,
-                max_tokens=100  # 必要に応じて調整可能
+                max_tokens=100,  # 必要に応じて調整可能
             )
             return response.choices[0].text.strip()
