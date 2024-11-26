@@ -50,8 +50,9 @@ class PromptCreator:
             prompt_ds["system_prompt"] = (
                 "Determine the relationship between a given premise and hypothesis based on the following guidelines: \n"
                 "- If the hypothesis logically follows from the premise, label it as `entailment`. \n"
-                "- If the hypothesis contradicts the premise, label it as `contradiction`.\n"
+                "- If the hypothesis contradicts the premise, label it as `contradiction`. \n"
                 "- If the relationship between the premise and hypothesis is unclear or not supported by the premise, label it as `neutral`. \n"
+                "Respond with the label only (entailment, contradiction, or neutral). Do not provide any explanation or reasoning."
             )
             selected_indices = random.sample(range(len(ds)), self.example_num)
             prompt_ds["data"] = [
@@ -67,6 +68,8 @@ class PromptCreator:
                 "Determine the sentiment of the given text based on the following guidelines: \n"
                 "- If the text expresses a positive sentiment, label it as `positive`. \n"
                 "- If the text expresses a negative sentiment, label it as `negative`. \n"
+                "Respond with the label only (positive or negative). Do not provide any explanation or reasoning."
+
             )
             selected_indices = random.sample(range(len(ds["train"])), self.example_num)
             prompt_ds["data"] = [ds["train"]["sentence"][i] for i in selected_indices]
