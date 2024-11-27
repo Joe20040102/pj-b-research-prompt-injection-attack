@@ -93,3 +93,25 @@ class LLM:
                 max_tokens=100,  # 必要に応じて調整可能
             )
             return response.choices[0].text.strip()
+        
+    def _postprocess(self, prompt: dict) -> dict:
+        """LLMの出力を後処理する
+
+        Args:
+            prompt (dict): create_llm_outputsで生成されたLLMの出力
+
+        Returns:
+            dict: 後処理されたLLMの出力
+        """
+        # LLM出力に含まれる\nを削除する
+        prompt["injected_data_output"] = [
+            output.replace("\n", "") for output in prompt["injected_data_output"]
+        ]
+        prompt["target_task_data_output"] = [
+            output.replace("\n", "") for output in prompt["target_task_data_output"]
+        ]
+        prompt["injected_task_data_output"] = [
+            output.replace("\n", "") for output in prompt["injected_task_data_output"]
+        ]
+        
+        return prompt

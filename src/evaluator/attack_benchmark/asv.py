@@ -1,4 +1,4 @@
-def asv(prompt: dict, target_task: str, injected_task: str) -> dict:
+def asv(prompt: dict) -> dict:
     """入力されたタスクについて Attack Success Value を測定する
 
     Args:
@@ -32,6 +32,7 @@ def calculate_asv(llm_outputs: list, true_labels: list) -> float:
     """
     asv = 0
     for output, label in zip(llm_outputs, true_labels):
+        print(f"output: {output}, label: {label}")
         if output == label:
             asv += 1
     asv /= len(llm_outputs)
