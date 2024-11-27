@@ -37,7 +37,46 @@ class LLM:
                 "無効なプロバイダ名です。'gemini' または 'openai' を指定してください。"
             )
 
-    def generate(self, prompt: str) -> str:
+    def create_llm_outputs(self, prompt: dict) -> dict:
+        """LLMの出力を生成する
+
+        Args:
+            prompt (dict): prompt_creatorで生成されたプロンプト
+
+        Returns:
+            dict: {
+                target_task: str,
+                injected_task: str,
+                system_prompt: str,
+                injected_system_prompt: str,
+                injected_data: List[str],
+                target_task_data: List[str],
+                injected_task_data: List[str],
+                target_task_labels: List[str],
+                injected_task_labels: List[str],
+                injected_data_output: List[str],
+                target_task_data_output: List[str],
+                injected_task_data_output: List[str]
+            }
+        """
+        prompt["injected_data_output"] = [
+            self._generate(f"{prompt["system_prompt"]} {prompt["injected_data"][i]}")
+            for i in range(len(prompt["injected_data"]))
+        ]
+        prompt["target_task_data_output"] = [
+            self._generate(f"{prompt["system_prompt"]} {prompt["target_task_data"][i]}")
+            for i in range(len(prompt["target_task_data"]))
+        ]
+        prompt["injected_task_data_output"] = [
+            self._generate(
+                f"{prompt["injected_system_prompt"]} {prompt["injected_task_data"][i]}"
+            )
+            for i in range(len(prompt["injected_task_data"]))
+        ]
+        self._postprocess(prompt)
+        return prompt
+
+    def _generate(self, prompt: str) -> str:
         """プロンプトに基づいてタスクを処理する
         Args:
             prompt (str): 入力プロンプト
