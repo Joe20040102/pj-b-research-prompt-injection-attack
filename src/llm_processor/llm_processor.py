@@ -1,5 +1,6 @@
 import os
 
+import pandas as pd
 import google.generativeai as genai
 import openai
 from dotenv import load_dotenv
@@ -15,19 +16,19 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 
 class LLM:
-    def __init__(self, provider: str, model_name: str):
+    def __init__(self, provider: str, model: str):
         """
         Args:
-            model_name (str): 使用するモデルの名前
+            model (str): 使用するモデルの名前
             provider (str): モデルプロバイダ ("gemini" または "openai")
         """
         self.provider = provider
-        self.model_name = model_name
+        self.model = model
 
         if provider == "gemini":
             if not GOOGLE_API_KEY:
                 raise ValueError("Google APIキーが設定されていません。")
-            self.model = genai.GenerativeModel(model_name)
+            self.model = genai.GenerativeModel(model)
         elif provider == "openai":
             if not OPENAI_API_KEY:
                 raise ValueError("OpenAI APIキーが設定されていません。")
@@ -37,41 +38,41 @@ class LLM:
                 "無効なプロバイダ名です。'gemini' または 'openai' を指定してください。"
             )
 
-    def create_llm_outputs(self, prompt: dict) -> dict:
+    def create_llm_outputs(self, prompt: pd.DataFrame) -> pd.DataFrame:
         """LLMの出力を生成する
 
         Args:
-            prompt (dict): prompt_creatorで生成されたプロンプト
+            prompt (pd.DataFrame): prompt_creatorで生成されたプロンプト
 
         Returns:
-            dict: {
+            pd.DataFrame: {
                 target_task: str,
-                injected_task: str,
+                inject_task: str,
                 system_prompt: str,
-                injected_system_prompt: str,
+                inject_task_system_prompt: str,
                 injected_data: List[str],
                 target_task_data: List[str],
-                injected_task_data: List[str],
+                inject_task_data: List[str],
                 target_task_labels: List[str],
-                injected_task_labels: List[str],
+                inject_task_labels: List[str],
                 injected_data_output: List[str],
                 target_task_data_output: List[str],
-                injected_task_data_output: List[str]
+                inject_task_data_output: List[str]
             }
         """
         prompt["injected_data_output"] = [
-            self._generate(f"{prompt["system_prompt"]} {prompt["injected_data"][i]}")
+            self._generate(f"{prompt["system_prompt"][i]} {prompt["injected_data"][i]}")
             for i in range(len(prompt["injected_data"]))
         ]
         prompt["target_task_data_output"] = [
-            self._generate(f"{prompt["system_prompt"]} {prompt["target_task_data"][i]}")
+            self._generate(f"{prompt["system_prompt"][i]} {prompt["target_task_data"][i]}")
             for i in range(len(prompt["target_task_data"]))
         ]
-        prompt["injected_task_data_output"] = [
+        prompt["inject_task_data_output"] = [
             self._generate(
-                f"{prompt["injected_system_prompt"]} {prompt["injected_task_data"][i]}"
+                f"{prompt["inject_task_system_prompt"][i]} {prompt["inject_task_data"][i]}"
             )
-            for i in range(len(prompt["injected_task_data"]))
+            for i in range(len(prompt["inject_task_data"]))
         ]
         self._postprocess(prompt)
         return prompt
@@ -88,13 +89,13 @@ class LLM:
             return response.text
         elif self.provider == "openai":
             response = openai.Completion.create(
-                model=self.model_name,
+                model=self.model,
                 prompt=prompt,
                 max_tokens=100,  # 必要に応じて調整可能
             )
             return response.choices[0].text.strip()
-        
-    def _postprocess(self, prompt: dict) -> dict:
+
+    def _postprocess(self, prompt: pd.DataFrame) -> pd.DataFrame:
         """LLMの出力を後処理する
 
         Args:
@@ -110,8 +111,8 @@ class LLM:
         prompt["target_task_data_output"] = [
             output.replace("\n", "") for output in prompt["target_task_data_output"]
         ]
-        prompt["injected_task_data_output"] = [
-            output.replace("\n", "") for output in prompt["injected_task_data_output"]
+        prompt["inject_task_data_output"] = [
+            output.replace("\n", "") for output in prompt["inject_task_data_output"]
         ]
-        
+
         return prompt
