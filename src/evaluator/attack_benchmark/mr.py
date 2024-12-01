@@ -1,11 +1,14 @@
 import pandas as pd
 
+
 def mr(prompt: pd.DataFrame) -> pd.DataFrame:
     if not {"injected_data_output", "inject_task_data_output"}.issubset(prompt.columns):
         raise ValueError("必要な列が含まれていません。")
-    
+
     result = {
-        "MR": calculate_mr(prompt["injected_data_output"], prompt["inject_task_data_output"]),
+        "MR": calculate_mr(
+            prompt["injected_data_output"], prompt["inject_task_data_output"]
+        ),
     }
     return pd.DataFrame([result])
 

@@ -1,12 +1,15 @@
 import pandas as pd
 
+
 def asv(prompt: pd.DataFrame) -> pd.DataFrame:
     """ASVを計算する"""
     if not {"injected_data_output", "inject_task_labels"}.issubset(prompt.columns):
         raise ValueError("必要な列が含まれていません。")
-    
+
     result = {
-        "ASV": calculate_asv(prompt["injected_data_output"], prompt["inject_task_labels"]),
+        "ASV": calculate_asv(
+            prompt["injected_data_output"], prompt["inject_task_labels"]
+        ),
     }
     return pd.DataFrame([result])
 

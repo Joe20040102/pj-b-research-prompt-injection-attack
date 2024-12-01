@@ -1,12 +1,22 @@
 import pandas as pd
 
+
 def pna(prompt: pd.DataFrame) -> pd.DataFrame:
-    if not {"target_task_data_output", "target_task_labels", "inject_task_data_output", "inject_task_labels"}.issubset(prompt.columns):
+    if not {
+        "target_task_data_output",
+        "target_task_labels",
+        "inject_task_data_output",
+        "inject_task_labels",
+    }.issubset(prompt.columns):
         raise ValueError("必要な列が含まれていません。")
-    
+
     result = {
-        "PNA-T": calculate_pna(prompt["target_task_data_output"], prompt["target_task_labels"]),
-        "PNA-I": calculate_pna(prompt["inject_task_data_output"], prompt["inject_task_labels"]),
+        "PNA-T": calculate_pna(
+            prompt["target_task_data_output"], prompt["target_task_labels"]
+        ),
+        "PNA-I": calculate_pna(
+            prompt["inject_task_data_output"], prompt["inject_task_labels"]
+        ),
     }
     return pd.DataFrame([result])
 

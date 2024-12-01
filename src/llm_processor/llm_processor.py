@@ -1,8 +1,8 @@
 import os
 
-import pandas as pd
 import google.generativeai as genai
 import openai
+import pandas as pd
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -65,7 +65,9 @@ class LLM:
             for i in range(len(prompt["injected_data"]))
         ]
         prompt["target_task_data_output"] = [
-            self._generate(f"{prompt["system_prompt"][i]} {prompt["target_task_data"][i]}")
+            self._generate(
+                f"{prompt["system_prompt"][i]} {prompt["target_task_data"][i]}"
+            )
             for i in range(len(prompt["target_task_data"]))
         ]
         prompt["inject_task_data_output"] = [
