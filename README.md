@@ -8,10 +8,8 @@ This project aims to reproduce experiments from the paper, "Formalizing and Benc
 
 Prompt injection attacks involve injecting malicious instructions or data into the prompt of an LLM-integrated application to manipulate its output. The paper introduces a framework to formalize prompt injection attacks and conducts a comprehensive benchmark of five different attack methods and ten defensive strategies across multiple LLMs and tasks.
 
-### Setup
-
-### How To Use
-1. select target_task, injected_task, prompt_num を選択してプロンプトを生成する
+### About Experiment
+1. select target_task, injected_task, prompt_num, and create prompt sets.
     - kind of task
         - DSD : duplicate sentense detection
         - GC : grammer correction
@@ -27,5 +25,15 @@ Prompt injection attacks involve injecting malicious instructions or data into t
         - fake completion
         - combined attack
 
-2. 
+2. select LLM-model and process the prompt sets
+    - kind of LLM-model
+        - gemini
+            - gemini-1.5-flash
+            - gemini-1.5-pro
+
+3. evaluate attacks
+    - kind of indicator
+       - ASV : Attack Success Value
+       - MR : Matching Rate
+       - PNA : Performance under No Attacks
 
